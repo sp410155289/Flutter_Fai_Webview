@@ -57,7 +57,7 @@ class FaiWebViewWidget extends StatefulWidget {
    * content: {"url":"http://pic.studyyoun.com/1543767087584","index":0,"urls":"http://pic.studyyoun.com/1543767087584,http://pic.studyyoun.com/1543767100547"}
    *
    */
-  Function(int index, String url, List<String> images) imageCallBack;
+  Function(int index, String url, List images) imageCallBack;
 
   FaiWebViewWidget({
     //webview 加载网页链接
@@ -130,7 +130,7 @@ class AndroidWebViewState extends State<FaiWebViewWidget> {
 
   //回调
   Function(int code, String message, dynamic content) callback;
-  Function(int index, String url, List<String> images) imageCallBack;
+  Function(int index, String url, List images) imageCallBack;
 
   AndroidWebViewState(this.callback,
       {this.url,
@@ -213,17 +213,20 @@ class AndroidWebViewState extends State<FaiWebViewWidget> {
       int code = arguments["code"];
       String message = arguments["message"];
       dynamic content = arguments["content"];
-      print("native_webview:code-> " +
-          code.toString() +
-          " ; message:" +
-          message.toString() +
-          "; content " +
-          content.toString());
+     print("native_webview:code-> " +
+         code.toString() +
+         " ; message:" +
+         message.toString() +
+         "; content " +
+         content.toString());
+
 
       if (code == 203) {
+
         int index = arguments["index"];
         String url = arguments["url"];
-        List<String> urls = arguments["urls"];
+        List urls = arguments["urls"];
+
         if (imageCallBack != null) {
           imageCallBack(index, url, urls);
         }
