@@ -169,11 +169,22 @@
     } else if ([url.scheme isEqualToString:@"image-preview-index"]) {
         //图片点击回调
         NSInteger index = [[url.absoluteString substringFromIndex:[@"image-preview-index:" length]] integerValue];
-        NSString * imgPath = self.imageUrlArr.count > index?self.imageUrlArr[index]:nil;
-        NSLog(@"imgPath = %@",imgPath);
+        NSString * url = self.imageUrlArr.count > index?self.imageUrlArr[index]:nil;
+        NSLog(@"imgPath = %@ index=%ld count=%ld",url, index, self.imageUrlArr.count);
+        
+        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+        [dict setObject:[NSNumber numberWithInt:203] forKey:@"code"];
+        [dict setObject:@"图片点击 方法回调" forKey:@"message"];
+        [dict setObject:url forKey:@"content"];
+        
+        [dict setObject:url forKey:@"url"];
+        [dict setObject:[NSNumber numberWithInteger:index] forKey:@"index"];
+        [dict setObject:self.imageUrlArr forKey:@"urls"];
+        [self messagePost:dict];
+        
         decisionHandler(WKNavigationActionPolicyCancel);
         
-    } else if (![navigationAction.request.URL.absoluteString isEqualToString:@"about:blank"]) {
+    } else if (![navigationAction.request.URL.absoluteString isEqualToString:@"about:blank"] && navigationAction.navigationType == 0) {
         NSLog(@"navigationAction.request.URL== %@", navigationAction.request.URL);
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
         [dict setObject:[NSNumber numberWithInt:204] forKey:@"code"];
@@ -351,8 +362,16 @@
         if (!error) {
             
             NSMutableArray * urlArray = result?[NSMutableArray arrayWithArray:[result componentsSeparatedByString:@"***"]]:nil;
+            weakSelf.imageUrlArr = [[NSMutableArray alloc] init];
             NSLog(@"urlArray = %@",urlArray);
-            weakSelf.imageUrlArr = urlArray;
+            for (int i=0; i< urlArray.count; i++) {
+                NSString *url = urlArray[i];
+                
+                [weakSelf.imageUrlArr addObject:[NSString stringWithFormat:@"%@", url]];
+            }
+            
+            
+            
         } else {
             weakSelf.imageUrlArr = nil;
         }
